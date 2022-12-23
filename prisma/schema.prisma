@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Triage {
+  id                       String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  callNumber               Int                        @default(autoincrement())
+  created_at               DateTime                   @default(now())
+  finished_at              DateTime                   @default(now())
+  Agency                   Agency                     @relation(fields: [agencyId], references: [id])
+  agencyId                 String                     @db.Uuid
+  Forwarding               Forwarding                 @relation(fields: [forwardingId], references: [id])
+  forwardingId             String                     @db.Uuid
+  User                     User                       @relation(fields: [attendantId], references: [id])
+  attendantId              String                     @db.Uuid
+  Customer                 Customer                   @relation(fields: [customerId], references: [id])
+  customerId               String                     @db.Uuid
+  assistances              Assistance[]
+  AttendanceTypesOnTriages AttendanceTypesOnTriages[]
+}
+
+model Assistance {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at       DateTime          @default(now())
+  finished_at      DateTime          @default(now())
+  Agency           Agency            @relation(fields: [agencyId], references: [id])
+  agencyId         String            @unique @db.Uuid
+  Forwarding       Forwarding        @relation(fields: [forwardingId], references: [id])
+  forwardingId     String            @unique @db.Uuid
+  Customer         Customer          @relation(fields: [customerId], references: [id])
+  customerId       String            @unique @db.Uuid
+  Triage           Triage            @relation(fields: [triageId], references: [id])
+  triageId         String            @unique @db.Uuid
+  User             User              @relation(fields: [assistantId], references: [id])
+  assistantId      String            @unique @db.Uuid
+  assistanceReport AssistanceReport?
+}
+
+model AssistanceReport {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status       Int        @default(1)
+  report       String
+  assistance   Assistance @relation(fields: [assistanceId], references: [id])
+  assistanceId String     @unique @db.Uuid
+}
+
+model User {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username   String       @unique
+  name       String
+  password   String
+  isAdmin    Boolean      @default(false)
+  triages    Triage[]
+  assistance Assistance[]
+  created_at DateTime     @default(now())
+  updated_at DateTime     @default(now())
+  Session    Session[]
+}
+
+model Session {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token  String
+  User   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+}
+
+model Customer {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                  String                   @unique
+  name                   String
+  cpf                    String                   @unique
+  identity               String                   @unique
+  birth_date             DateTime
+  triages                Triage[]
+  assistances            Assistance[]
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime                 @default(now())
+  CustomerTypeOnCustomer CustomerTypeOnCustomer[]
+  AttendanceQueue        AttendanceQueue?
+}
+
+model CustomerType {
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String                   @unique
+  created_at             DateTime                 @default(now())
+  CustomerTypeOnCustomer CustomerTypeOnCustomer[]
+}
+
+model CustomerTypeOnCustomer {
+  customer       Customer     @relation(fields: [customerId], references: [id])
+  customerId     String       @db.Uuid
+  customerType   CustomerType @relation(fields: [customerTypeId], references: [id])
+  customerTypeId String       @db.Uuid
+  created_at     DateTime     @default(now())
+
+  @@id([customerId, customerTypeId])
+}
+
+model Agency {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @unique
+  address         String
+  triages         Triage[]
+  assistances     Assistance[]
+  createdAt       DateTime          @default(now())
+  AttendanceQueue AttendanceQueue[]
+}
+
+model AttendanceType {
+  id                       String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                     String                     @unique
+  description              String
+  createdAt                DateTime                   @default(now())
+  AttendanceTypesOnTriages AttendanceTypesOnTriages[]
+}
+
+model AttendanceTypesOnTriages {
+  triage           Triage         @relation(fields: [triageId], references: [id])
+  triageId         String         @db.Uuid
+  attendanceType   AttendanceType @relation(fields: [attendanceTypeId], references: [id])
+  attendanceTypeId String         @db.Uuid
+  created_at       DateTime       @default(now())
+
+  @@id([triageId, attendanceTypeId])
+}
+
+model Forwarding {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @unique
+  description     String
+  triages         Triage[]
+  assistances     Assistance[]
+  createdAt       DateTime          @default(now())
+  AttendanceQueue AttendanceQueue[]
+}
+
+model AttendanceQueue {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customer     Customer   @relation(fields: [customerId], references: [id])
+  customerId   String     @unique @db.Uuid
+  forwarding   Forwarding @relation(fields: [forwardingId], references: [id])
+  forwardingId String     @db.Uuid
+  agency       Agency     @relation(fields: [agencyId], references: [id])
+  agencyId     String     @db.Uuid
+}
+
+enum Role {
+  USER
+  ADMIN
+}
