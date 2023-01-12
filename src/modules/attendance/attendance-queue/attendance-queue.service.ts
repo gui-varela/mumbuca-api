@@ -68,4 +68,16 @@ export class AttendanceQueueService {
 
     return currentQueue;
   }
+
+  async listCurrentQueueByAgency(agencyId: string) {
+    const currentQueue = await this.prisma.attendanceQueue.findMany({
+      where: {
+        agencyId: {
+          equals: agencyId,
+        },
+      },
+    });
+
+    return currentQueue;
+  }
 }

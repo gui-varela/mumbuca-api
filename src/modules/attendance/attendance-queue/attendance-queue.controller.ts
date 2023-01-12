@@ -17,4 +17,9 @@ export class AttendanceQueueController {
       forwardingId,
     );
   }
+
+  @Get()
+  async listCurrentQueueByAgency(@Query('agencyId') agencyId: string) {
+    return await this.attendanceQueueService.listCurrentQueueByAgency(agencyId);
+  }
 }
