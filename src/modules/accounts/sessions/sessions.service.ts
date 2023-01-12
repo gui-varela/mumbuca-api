@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
-import { PrismaService } from 'src/database/PrismaService';
+import { PrismaService } from '../../../database/PrismaService';
 import { AppError } from 'src/errors/AppError';
 import { SessionDTO } from '../user/session.dto';
 

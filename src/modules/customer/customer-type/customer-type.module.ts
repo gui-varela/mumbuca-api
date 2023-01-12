@@ -13,10 +13,4 @@ import { EnsureAuthenticated } from 'src/middlewares/ensureAuthenticated.middlew
   controllers: [CustomerTypeController],
   providers: [CustomerTypeService, PrismaService],
 })
-export class CustomerTypeModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(EnsureAuthenticated)
-      .forRoutes({ path: 'customer-type', method: RequestMethod.ALL });
-  }
-}
+export class CustomerTypeModule {}

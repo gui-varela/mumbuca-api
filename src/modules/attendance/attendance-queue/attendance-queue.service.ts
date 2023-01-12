@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/PrismaService';
+import { PrismaService } from '../../../database/PrismaService';
 import { AppError } from 'src/errors/AppError';
 import { AttendanceQueueDTO } from './attendance-queue.dto';
 

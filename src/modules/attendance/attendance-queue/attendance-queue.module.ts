@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AttendanceQueueService } from './attendance-queue.service';
 import { AttendanceQueueController } from './attendance-queue.controller';
-import { PrismaService } from 'src/database/PrismaService';
+import { PrismaService } from '../../../database/PrismaService';
 
 @Module({
   controllers: [AttendanceQueueController],

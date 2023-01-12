@@ -7,7 +7,7 @@ import {
 import { AgencyService } from './agency.service';
 import { AgencyController } from './agency.controller';
 import { PrismaService } from '../../../database/PrismaService';
-import { EnsureAuthenticated } from '../../../middlewares/ensureAuthenticated.middleware';
+import { EnsureAuthenticated } from 'src/middlewares/ensureAuthenticated.middleware';
 
 @Module({
   controllers: [AgencyController],

@@ -1,6 +1,8 @@
 import { PrismaService } from './database/PrismaService';
+import { UserService } from './modules/accounts/user/user.service';
 
 const prisma = new PrismaService();
+const userService = new UserService(prisma);
 
 async function backup() {
   await prisma.agency.createMany({
@@ -187,27 +189,11 @@ async function backup() {
     ],
   });
 
-  await prisma.user.createMany({
-    data: [
-      {
-        id: '9be6c878-f8dd-49a8-8c95-8962bf65c645',
-        username: 'guilherme',
-        name: 'Guilherme Varela',
-        password: '1234',
-      },
-      {
-        id: '601cc618-6d7b-44d0-a4c5-40ffff37fea9',
-        username: 'ezequiel',
-        name: 'Ezequiel Santos',
-        password: '1234',
-      },
-      {
-        id: 'a0c0522e-d8c8-4ccb-b9cd-df4b38084e11',
-        username: 'daniel',
-        name: 'Daniel Emilio',
-        password: '1234',
-      },
-    ],
+  await userService.create({
+    name: 'Guilherme Varela',
+    username: 'guilherme',
+    password: '1234',
+    updated_at: new Date(),
   });
 
   await prisma.customer.createMany({

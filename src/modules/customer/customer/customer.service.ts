@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AppError } from 'src/errors/AppError';
 import { PrismaService } from '../../../database/PrismaService';
 import { CustomerDTO } from './customer.dto';
 
@@ -12,5 +13,19 @@ export class CustomerService {
     });
 
     return user;
+  }
+
+  async findByCPF(cpf: string) {
+    try {
+      const customer = await this.prisma.customer.findUniqueOrThrow({
+        where: {
+          cpf,
+        },
+      });
+
+      return customer;
+    } catch {
+      throw new AppError('Customer does not exist', 404);
+    }
   }
 }

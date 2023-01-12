@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/PrismaService';
-import { AppError } from 'src/errors/AppError';
+import { PrismaService } from '../../../database/PrismaService';
+import { AppError } from '../../../errors/AppError';
 import { AgencyDTO } from './agency.dto';
 
 @Injectable()

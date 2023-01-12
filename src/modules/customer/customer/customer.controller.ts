@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CustomerDTO } from './customer.dto';
 import { CustomerService } from './customer.service';
 
@@ -9,5 +9,10 @@ export class CustomerController {
   @Post()
   create(@Body() data: CustomerDTO) {
     return this.customerService.create(data);
+  }
+
+  @Get()
+  findByCPF(@Query('cpf') cpf: string) {
+    return this.customerService.findByCPF(cpf);
   }
 }
